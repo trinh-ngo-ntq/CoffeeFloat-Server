@@ -1,10 +1,9 @@
 package com.login.social.providers;
 
+import com.login.exception.ResourceNotFoundException;
 import com.login.model.UserBean;
 import com.login.repository.UserRepository;
-import com.login.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
@@ -26,7 +25,7 @@ public class FacebookProvider {
         String[] fields = {"id", "cover", "birthday", "email", "gender", "name"};
         User user = facebook.fetchObject("me", User.class, fields);
         if (user == null || user.getId() == null) {
-            throw new com.login.exception.ResourceNotFoundException("Token is invalid");
+            throw new ResourceNotFoundException("Token is invalid");
         }
         UserBean userBean = userRepository.findByUserId(user.getId());
         if (userBean == null) {

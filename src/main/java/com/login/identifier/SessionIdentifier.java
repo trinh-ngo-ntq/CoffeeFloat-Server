@@ -1,17 +1,16 @@
 package com.login.identifier;
 
-import java.util.UUID;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.social.UserIdSource;
 import org.springframework.social.config.annotation.SocialConfigurerAdapter;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.util.UUID;
+
 
 @Configuration
-public class SessionIdentifier extends SocialConfigurerAdapter
-{
+public class SessionIdentifier extends SocialConfigurerAdapter {
 
     @Override
     public UserIdSource getUserIdSource() {
@@ -19,7 +18,7 @@ public class SessionIdentifier extends SocialConfigurerAdapter
     }
 
     private static final class SessionIdUserIdSource implements UserIdSource {
-    	@Override
+        @Override
         public String getUserId() {
             RequestAttributes request = RequestContextHolder.currentRequestAttributes();
             String uuid = (String) request.getAttribute("_socialUserUUID", RequestAttributes.SCOPE_SESSION);

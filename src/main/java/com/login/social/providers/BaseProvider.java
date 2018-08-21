@@ -1,7 +1,8 @@
 package com.login.social.providers;
 
-import javax.transaction.Transactional;
-
+import com.login.autologin.Autologin;
+import com.login.model.UserBean;
+import com.login.repository.UserRepository;
 import com.login.security.JwtService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,32 +13,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.google.api.Google;
-
-import com.login.autologin.Autologin;
-import com.login.model.UserBean;
-import com.login.repository.UserRepository;
 import org.springframework.social.twitter.api.Twitter;
+
+import javax.transaction.Transactional;
 
 @Configuration
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class BaseProvider {
 
+    @Autowired
+    protected Autologin autologin;
+    @Autowired
+    JwtService jwtService;
     private Facebook facebook;
     private Google google;
     private ConnectionRepository connectionRepository;
     private Twitter twitter;
-
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    protected Autologin autologin;
-
-    @Autowired
-    JwtService jwtService;
 
     public BaseProvider(Facebook facebook, Google google, ConnectionRepository connectionRepository, Twitter twitter) {
         this.facebook = facebook;
@@ -45,7 +40,7 @@ public class BaseProvider {
         this.connectionRepository = connectionRepository;
         this.twitter = twitter;
     }
-    
+
     @Transactional
     protected void saveUserDetails(UserBean userBean) {
         if (StringUtils.isNotEmpty(userBean.getPassword())) {
@@ -91,7 +86,7 @@ public class BaseProvider {
     }
 
     public boolean checkLoginSocial(UserBean userBean) {
-        if (userBean.getUserId() != null){
+        if (userBean.getUserId() != null) {
             String result = jwtService.generateTokenLogin(userBean.getEmail());
             userBean.setAccesstoken(result);
             return true;

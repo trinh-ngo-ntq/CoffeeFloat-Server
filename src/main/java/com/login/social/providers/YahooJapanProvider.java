@@ -3,7 +3,6 @@ package com.login.social.providers;
 import com.login.exception.ResourceNotFoundException;
 import com.login.model.UserBean;
 import com.login.repository.UserRepository;
-import com.login.security.JwtService;
 import jp.co.yahoo.yconnect.YConnectExplicit;
 import jp.co.yahoo.yconnect.core.oidc.UserInfoObject;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/connect")
 public class ChangeDefaultFlowController extends ConnectController {
 
-	public ChangeDefaultFlowController(ConnectionFactoryLocator connectionFactoryLocator,
-			ConnectionRepository connectionRepository) {
-		super(connectionFactoryLocator, connectionRepository);
-	}
-	
-	@Override
+    public ChangeDefaultFlowController(ConnectionFactoryLocator connectionFactoryLocator,
+                                       ConnectionRepository connectionRepository) {
+        super(connectionFactoryLocator, connectionRepository);
+    }
+
+    @Override
     protected String connectedView(String providerId) {
-        return "redirect:/"+providerId;
+        return "redirect:/" + providerId;
     }
 
 }

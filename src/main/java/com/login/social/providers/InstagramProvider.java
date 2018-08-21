@@ -2,6 +2,7 @@ package com.login.social.providers;
 
 import com.login.config.InstagramConfig;
 import com.login.exception.ResourceNotFoundException;
+import com.login.model.UserBean;
 import com.login.repository.UserRepository;
 import com.login.security.JwtService;
 import org.jinstagram.Instagram;
@@ -11,14 +12,12 @@ import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.login.model.UserBean;
-
 @Service
 public class InstagramProvider {
     private static final String INSTAGRAM = "instagram";
 
     @Autowired
-    BaseProvider baseProvider ;
+    BaseProvider baseProvider;
     @Autowired
     InstagramConfig instagramConfig;
     @Autowired
@@ -26,8 +25,8 @@ public class InstagramProvider {
     @Autowired
     UserRepository userRepository;
 
-	public UserBean getInstagramUserData(String token) {
-        Token token1 = new Token(token,instagramConfig.clientSecret);
+    public UserBean getInstagramUserData(String token) {
+        Token token1 = new Token(token, instagramConfig.clientSecret);
         Instagram instagram = new Instagram(token1);//verify token.
         UserInfo userInfo = null;
         try {

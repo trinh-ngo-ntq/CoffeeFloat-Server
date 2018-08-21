@@ -33,12 +33,6 @@ public class LoginController {
     @Autowired
     TwitterProvider twitterProvider;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private Autologin autologin;
-    @Autowired
     InstagramProvider instagramProvider;
     @Autowired
     LineConfig lineConfig;
@@ -46,6 +40,12 @@ public class LoginController {
     InstagramConfig instagramConfig;
     @Autowired
     YahooJapanProvider yahooJapanProvider;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private Autologin autologin;
 
     @RequestMapping(value = {"/", "/login"})
     public String login() {
@@ -76,15 +76,29 @@ public class LoginController {
     @RequestMapping(value = "/loginSocialByToken", method = RequestMethod.POST)
     public ResponseEntity<ResponseEntityBase> loginSocialByToken(@RequestBody RequestLogin requestLogin) throws Exception {
         ResponseEntityBase<UserBean> responseEntityBase;
-        switch (requestLogin.getType()){
-            case "FACEBOOK": responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(),"",facebookProvider.populateUserDetailsFromFacebook(requestLogin.getToken())); break;
-            case "GOOGLE": responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(),"",googleProvider.populateUserDetailsFromGoogle(requestLogin.getToken())); break;
-            case "TWITTER": responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(),"",twitterProvider.populateUserDetailsFromTwitter(requestLogin.getToken())); break;
-            case "INSTAGRAM": responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(),"",instagramProvider.getInstagramUserData(requestLogin.getToken())); break;
-            case "LINE": responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(),"",lineProvider.loginLineByToken(requestLogin.getToken())); break;
-            case "YAHOOJP": responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(),"",yahooJapanProvider.getyObject(requestLogin.getToken())); break;
-            default: responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(),"",null); break;
+        switch (requestLogin.getType()) {
+            case "FACEBOOK":
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", facebookProvider.populateUserDetailsFromFacebook(requestLogin.getToken()));
+                break;
+            case "GOOGLE":
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", googleProvider.populateUserDetailsFromGoogle(requestLogin.getToken()));
+                break;
+            case "TWITTER":
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", twitterProvider.populateUserDetailsFromTwitter(requestLogin.getToken()));
+                break;
+            case "INSTAGRAM":
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", instagramProvider.getInstagramUserData(requestLogin.getToken()));
+                break;
+            case "LINE":
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", lineProvider.loginLineByToken(requestLogin.getToken()));
+                break;
+            case "YAHOOJP":
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", yahooJapanProvider.getyObject(requestLogin.getToken()));
+                break;
+            default:
+                responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
+                break;
         }
-        return new ResponseEntity<ResponseEntityBase>(responseEntityBase,HttpStatus.OK);
+        return new ResponseEntity<ResponseEntityBase>(responseEntityBase, HttpStatus.OK);
     }
 }

@@ -14,16 +14,16 @@ public class TwitterProvider {
     private static final String TWITTER = "twitter";
 
     @Autowired
-    BaseProvider baseProvider ;
+    BaseProvider baseProvider;
     @Autowired
     UserRepository userRepository;
     @Autowired
     JwtService jwtService;
 
-    public UserBean populateUserDetailsFromTwitter(String token){
+    public UserBean populateUserDetailsFromTwitter(String token) {
         org.springframework.social.twitter.api.Twitter twitter = new TwitterTemplate(token);
         TwitterProfile twitterProfile = twitter.userOperations().getUserProfile();
-        if(twitterProfile == null || Long.toString(twitterProfile.getId()) == null) {
+        if (twitterProfile == null || Long.toString(twitterProfile.getId()) == null) {
             throw new ResourceNotFoundException("Token is invalid");
         }
         UserBean userBean = userRepository.findByUserId(Long.toString(twitterProfile.getId()));

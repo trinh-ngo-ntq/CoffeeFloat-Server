@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class LineProvider {
 
+    private static final String LINE = "line";
     @Autowired
     RestTemplate restTemplate;
     @Autowired
@@ -28,14 +29,12 @@ public class LineProvider {
     @Autowired
     JwtService jwtService;
 
-    private static final String LINE = "line";
-
-    public UserBean loginLineByToken(String token){
+    public UserBean loginLineByToken(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constants.LineConst.authorization, Constants.LineConst.bearer + token);
         HttpEntity<HttpHeaders> httpEntity = new HttpEntity<>(headers);
         LineEntityProfile lineEntityProfile = restTemplate.exchange(Constants.LineConst.urlProfile, HttpMethod.GET, httpEntity, LineEntityProfile.class).getBody();
-        if(lineEntityProfile == null || lineEntityProfile.getUserId()==null) {
+        if (lineEntityProfile == null || lineEntityProfile.getUserId() == null) {
             throw new ResourceNotFoundException("Token is invalid");
         }
         UserBean userBean = userRepository.findByUserId(lineEntityProfile.getUserId());

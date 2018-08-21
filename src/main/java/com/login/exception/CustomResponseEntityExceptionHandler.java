@@ -29,90 +29,90 @@ import java.util.Date;
 @ControllerAdvice
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	public CustomResponseEntityExceptionHandler() {
-		super();
-	}
+    public CustomResponseEntityExceptionHandler() {
+        super();
+    }
 
-	// 400
-	@ExceptionHandler({ ConstraintViolationException.class })
-	public ResponseEntity<Object> handleBadRequest(final ConstraintViolationException ex, final WebRequest request) {
-		ResponseError responseError = new ResponseError(HttpStatus.BAD_REQUEST.toString(), new Date(),
-				Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}
+    // 400
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<Object> handleBadRequest(final ConstraintViolationException ex, final WebRequest request) {
+        ResponseError responseError = new ResponseError(HttpStatus.BAD_REQUEST.toString(), new Date(),
+                Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 
-	@ExceptionHandler({ DataIntegrityViolationException.class, NumberFormatException.class, JsonSyntaxException.class })
-	public ResponseEntity<Object> handleBadRequest(final DataIntegrityViolationException ex, final WebRequest request) {
-		ResponseError responseError = new ResponseError(HttpStatus.BAD_REQUEST.toString(), new Date(),
-				Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}
+    @ExceptionHandler({DataIntegrityViolationException.class, NumberFormatException.class, JsonSyntaxException.class})
+    public ResponseEntity<Object> handleBadRequest(final DataIntegrityViolationException ex, final WebRequest request) {
+        ResponseError responseError = new ResponseError(HttpStatus.BAD_REQUEST.toString(), new Date(),
+                Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
 
-	@Override
-	protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
-			final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-		ResponseError responseError = new ResponseError(HttpStatus.BAD_REQUEST.toString(), new Date(),
-				Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, headers, HttpStatus.BAD_REQUEST, request);
-	}
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
+                                                                  final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+        ResponseError responseError = new ResponseError(HttpStatus.BAD_REQUEST.toString(), new Date(),
+                Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, headers, HttpStatus.BAD_REQUEST, request);
+    }
 
-	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
-			final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
-		ResponseError responseError = new ResponseError(HttpStatus.UNPROCESSABLE_ENTITY.toString(), new Date(),
-				"Validation Failed", ex.getBindingResult().toString());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
-	}
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
+                                                                  final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
+        ResponseError responseError = new ResponseError(HttpStatus.UNPROCESSABLE_ENTITY.toString(), new Date(),
+                "Validation Failed", ex.getBindingResult().toString());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
 
-	@ExceptionHandler({ MethodArgumentTypeMismatchException.class })
-	public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
-			WebRequest request) {
-		String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
-		ResponseError responseError = new ResponseError(HttpStatus.UNPROCESSABLE_ENTITY.toString(), new Date(),
-				"Validation Failed", error);
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
-	}
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
+                                                                   WebRequest request) {
+        String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
+        ResponseError responseError = new ResponseError(HttpStatus.UNPROCESSABLE_ENTITY.toString(), new Date(),
+                "Validation Failed", error);
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
 
-	@ExceptionHandler({ BusinessException.class })
-	public ResponseEntity<Object> handleBusinessException(final BusinessException ex, final WebRequest request) {
-		ResponseError responseError = new ResponseError(Constants.HTTP_STATUS.UNPROCESSABLE_ENTITY_EXT, new Date(),
-				"Validation Failed", ex.getMessage());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
-	}
+    @ExceptionHandler({BusinessException.class})
+    public ResponseEntity<Object> handleBusinessException(final BusinessException ex, final WebRequest request) {
+        ResponseError responseError = new ResponseError(Constants.HTTP_STATUS.UNPROCESSABLE_ENTITY_EXT, new Date(),
+                "Validation Failed", ex.getMessage());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
 
-	// 404
-	@ExceptionHandler(value = { EntityNotFoundException.class, ResourceNotFoundException.class })
-	protected ResponseEntity<Object> handleNotFound(final RuntimeException ex, final WebRequest request) {
-		ResponseError responseError = new ResponseError(HttpStatus.NOT_FOUND.toString(), new Date(),
-				Constants.HTTP_STATUS_MSG.ERROR_NOT_FOUND, ex.getMessage());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
-	}
+    // 404
+    @ExceptionHandler(value = {EntityNotFoundException.class, ResourceNotFoundException.class})
+    protected ResponseEntity<Object> handleNotFound(final RuntimeException ex, final WebRequest request) {
+        ResponseError responseError = new ResponseError(HttpStatus.NOT_FOUND.toString(), new Date(),
+                Constants.HTTP_STATUS_MSG.ERROR_NOT_FOUND, ex.getMessage());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
 
-	// 409
-	@ExceptionHandler({ InvalidDataAccessApiUsageException.class, DataAccessException.class })
-	protected ResponseEntity<Object> handleConflict(final RuntimeException ex, final WebRequest request) {
-		ResponseError responseError = new ResponseError(HttpStatus.CONFLICT.toString(), new Date(),
-				Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
-		logger.error(ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.CONFLICT, request);
-	}
+    // 409
+    @ExceptionHandler({InvalidDataAccessApiUsageException.class, DataAccessException.class})
+    protected ResponseEntity<Object> handleConflict(final RuntimeException ex, final WebRequest request) {
+        ResponseError responseError = new ResponseError(HttpStatus.CONFLICT.toString(), new Date(),
+                Constants.HTTP_STATUS_MSG.ERROR_BAD_REQUEST, ex.getMessage());
+        logger.error(ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.CONFLICT, request);
+    }
 
-	// 500
-	@ExceptionHandler({ NullPointerException.class, IllegalArgumentException.class, IllegalStateException.class,
-			SQLException.class, ParseException.class, JsonParseException.class, IOException.class })
-	public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
-		logger.error(HttpStatus.INTERNAL_SERVER_ERROR + " " + HttpStatus.class.getName(), ex);
-		ResponseError responseError = new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR.toString(), new Date(),
-				Constants.HTTP_STATUS_MSG.ERROR_COMMON, ex.getClass().getName() + " " + ex.getMessage());
-		return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
-	}
+    // 500
+    @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class, IllegalStateException.class,
+            SQLException.class, ParseException.class, JsonParseException.class, IOException.class})
+    public ResponseEntity<Object> handleInternal(final RuntimeException ex, final WebRequest request) {
+        logger.error(HttpStatus.INTERNAL_SERVER_ERROR + " " + HttpStatus.class.getName(), ex);
+        ResponseError responseError = new ResponseError(HttpStatus.INTERNAL_SERVER_ERROR.toString(), new Date(),
+                Constants.HTTP_STATUS_MSG.ERROR_COMMON, ex.getClass().getName() + " " + ex.getMessage());
+        return handleExceptionInternal(ex, responseError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
 }
