@@ -2,6 +2,7 @@ package com.login.social.providers;
 
 import javax.transaction.Transactional;
 
+import com.login.security.JwtService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,9 @@ public class BaseProvider {
 
     @Autowired
     protected Autologin autologin;
+
+    @Autowired
+    JwtService jwtService;
 
     public BaseProvider(Facebook facebook, Google google, ConnectionRepository connectionRepository, Twitter twitter) {
         this.facebook = facebook;
@@ -86,11 +90,14 @@ public class BaseProvider {
         this.twitter = twitter;
     }
 
-    public boolean checkLoginSocial(UserBean user) {
-        if (user.getUserId() != null){
+    public boolean checkLoginSocial(UserBean userBean) {
+        if (userBean.getUserId() != null){
+            String result = jwtService.generateTokenLogin(userBean.getEmail());
+            userBean.setAccesstoken(result);
             return true;
         }
         return false;
     }
+
 
 }

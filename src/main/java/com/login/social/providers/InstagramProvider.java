@@ -1,14 +1,16 @@
 package com.login.social.providers;
 
+import com.login.config.InstagramConfig;
+import com.login.exception.ResourceNotFoundException;
 import com.login.repository.UserRepository;
 import com.login.security.JwtService;
 import org.jinstagram.Instagram;
+import org.jinstagram.auth.model.Token;
 import org.jinstagram.entity.users.basicinfo.UserInfo;
+import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
-import com.login.config.InstagramBuildService;
 import com.login.model.UserBean;
 
 @Service
@@ -18,19 +20,22 @@ public class InstagramProvider {
     @Autowired
     BaseProvider baseProvider ;
     @Autowired
-    JwtService jwtService;
+    InstagramConfig instagramConfig;
     @Autowired
-    InstagramBuildService instagramObj;
+    JwtService jwtService;
     @Autowired
     UserRepository userRepository;
 
-	public UserBean getInstagramUserData(String token) throws Exception {
-        instagramObj.build();
-        Instagram instagram = instagramObj.getInstagram(token);//verify token.
-        UserInfo userInfo = instagram.getCurrentUserInfo();
-        if(userInfo == null || userInfo.getData().getId()==null) {
-            throw new Exception("Token is invalid");
+	public UserBean getInstagramUserData(String token) {
+        Token token1 = new Token(token,instagramConfig.clientSecret);
+        Instagram instagram = new Instagram(token1);//verify token.
+        UserInfo userInfo = null;
+        try {
+            userInfo = instagram.getCurrentUserInfo();
+        } catch (InstagramException e) {
+            throw new ResourceNotFoundException("Token is invalid");
         }
+
         UserBean userBean = userRepository.findByUserId(userInfo.getData().getId());
         if (userBean == null) {
             userBean = new UserBean();
@@ -41,19 +46,11 @@ public class InstagramProvider {
         userBean.setAvatar(userInfo.getData().getProfilePicture());
         userBean.setProvider(INSTAGRAM);
         userBean.setPassword(INSTAGRAM);
-        try {
-            if (baseProvider.checkLoginSocial(userBean)) {
-                String result = jwtService.generateTokenLogin(userBean.getEmail());
-                userBean.setAccesstoken(result);
-            } else {
-                return null;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+        if (baseProvider.checkLoginSocial(userBean)) {
+            baseProvider.saveUserDetails(userBean);
+            baseProvider.autoLoginUser(userBean);
+            return userBean;
         }
-        baseProvider.saveUserDetails(userBean);
-        baseProvider.autoLoginUser(userBean);
-        return userBean;
+        return null;
     }
 }

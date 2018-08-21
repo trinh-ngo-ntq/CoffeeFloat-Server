@@ -1,5 +1,6 @@
 package com.login;
 
+import jp.co.yahoo.yconnect.YConnectExplicit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,4 +19,6 @@ public class SpringLoginApplication {
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.build();
 	}
+	@Bean
+	YConnectExplicit initYConnectExplicit(){return new YConnectExplicit();}
 }
