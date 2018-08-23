@@ -78,6 +78,7 @@ public class LoginController {
 	}
 
 	@ResponseBody
+
 	@RequestMapping(value = "/api/loginSocialByToken", method = RequestMethod.POST)
 	public ResponseEntity<?> loginSocialByToken(@RequestBody RequestLogin requestLogin)
 			throws Exception {

@@ -139,24 +139,7 @@
 			<artifactId>nimbus-jose-jwt</artifactId>
 			<version>4.20</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.json -->
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.json</artifactId>
-			<version>1.0.4</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
-		</dependency>
+
 		<!-- TrinhNX : add dependency for lib folder https://developer.yahoo.co.jp/yconnect/v1/server_app/java/sample.html -->
 		<dependency>
 			<groupId>log4j</groupId>
@@ -192,6 +175,8 @@
 			<artifactId>javax.json</artifactId>
 			<version>1.0.4</version>
 		</dependency>
+
+		<!-- TrinhNX : add dependency for lib folder -->
 		<dependency>
 			<groupId>..</groupId>
 			<artifactId>..</artifactId>
@@ -200,7 +185,6 @@
 			<systemPath>${basedir}/lib/jp.co.yahoo.yconnect-2.0.5_1.jar</systemPath>
 		</dependency>
 		<!-- End adding -->
-
 	</dependencies>
 	<repositories>
 		<repository>
