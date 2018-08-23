@@ -24,81 +24,108 @@ import javax.validation.Valid;
 @Controller
 public class LoginController {
 
-    @Autowired
-    LineProvider lineProvider;
-    @Autowired
-    FacebookProvider facebookProvider;
-    @Autowired
-    GoogleProvider googleProvider;
-    @Autowired
-    TwitterProvider twitterProvider;
-    @Autowired
-    InstagramProvider instagramProvider;
-    @Autowired
-    LineConfig lineConfig;
-    @Autowired
-    InstagramConfig instagramConfig;
-    @Autowired
-    YahooJapanProvider yahooJapanProvider;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private Autologin autologin;
+	@Autowired
+	LineProvider lineProvider;
+	@Autowired
+	FacebookProvider facebookProvider;
+	@Autowired
+	GoogleProvider googleProvider;
+	@Autowired
+	TwitterProvider twitterProvider;
+	@Autowired
+	InstagramProvider instagramProvider;
+	@Autowired
+	LineConfig lineConfig;
+	@Autowired
+	InstagramConfig instagramConfig;
+	@Autowired
+	YahooJapanProvider yahooJapanProvider;
 
-    @RequestMapping(value = {"/", "/login"})
-    public String login() {
-        return "login";
-    }
+	@Autowired
+	private PhoneProvider phoneProvider;
 
-    @GetMapping("/registration")
-    public String showRegistration(UserBean userBean) {
-        return "registration";
-    }
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired
+	private Autologin autologin;
 
-    @PostMapping("/registration")
-    public String registerUser(HttpServletResponse httpServletResponse, Model model, @Valid UserBean userBean, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "registration";
-        }
-        userBean.setProvider("REGISTRATION");
-        if (StringUtils.isNotEmpty(userBean.getPassword())) {
-            userBean.setPassword(bCryptPasswordEncoder.encode(userBean.getPassword()));
-        }
-        userRepository.save(userBean);
-        autologin.setSecuritySocialContext(userBean);
-        model.addAttribute("loggedInUser", userBean);
-        return "secure/user";
-    }
+	@RequestMapping(value = { "/", "/login" })
+	public String login() {
+		return "login";
+	}
 
-    @ResponseBody
-    @RequestMapping(value = "/loginSocialByToken", method = RequestMethod.POST)
-    public ResponseEntity<ResponseEntityBase> loginSocialByToken(@RequestBody RequestLogin requestLogin) throws Exception {
-        ResponseEntityBase<UserBean> responseEntityBase;
-        switch (requestLogin.getType()) {
-            case "FACEBOOK":
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", facebookProvider.populateUserDetailsFromFacebook(requestLogin.getToken()));
-                break;
-            case "GOOGLE":
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", googleProvider.populateUserDetailsFromGoogle(requestLogin.getToken()));
-                break;
-            case "TWITTER":
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", twitterProvider.populateUserDetailsFromTwitter(requestLogin.getToken()));
-                break;
-            case "INSTAGRAM":
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", instagramProvider.getInstagramUserData(requestLogin.getToken()));
-                break;
-            case "LINE":
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", lineProvider.loginLineByToken(requestLogin.getToken()));
-                break;
-            case "YAHOOJP":
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", yahooJapanProvider.getyObject(requestLogin.getToken()));
-                break;
-            default:
-                responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
-                break;
-        }
-        return new ResponseEntity<ResponseEntityBase>(responseEntityBase, HttpStatus.OK);
-    }
+	@GetMapping("/registration")
+	public String showRegistration(UserBean userBean) {
+		return "registration";
+	}
+
+	@PostMapping("/registration")
+	public String registerUser(HttpServletResponse httpServletResponse, Model model, @Valid UserBean userBean,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "registration";
+		}
+		userBean.setProvider("REGISTRATION");
+		if (StringUtils.isNotEmpty(userBean.getPassword())) {
+			userBean.setPassword(bCryptPasswordEncoder.encode(userBean.getPassword()));
+		}
+		userRepository.save(userBean);
+		autologin.setSecuritySocialContext(userBean);
+		model.addAttribute("loggedInUser", userBean);
+		return "secure/user";
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/loginSocialByToken", method = RequestMethod.POST)
+	public ResponseEntity<?> loginSocialByToken(@RequestBody RequestLogin requestLogin)
+			throws Exception {
+		ResponseEntityBase<UserBean> responseEntityBase;
+		switch (requestLogin.getType()) {
+		case "FACEBOOK":
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "",
+					facebookProvider.populateUserDetailsFromFacebook(requestLogin.getToken()));
+			break;
+		case "GOOGLE":
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "",
+					googleProvider.populateUserDetailsFromGoogle(requestLogin.getToken()));
+			break;
+		case "TWITTER":
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "",
+					twitterProvider.populateUserDetailsFromTwitter(requestLogin.getToken()));
+			break;
+		case "INSTAGRAM":
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "",
+					instagramProvider.getInstagramUserData(requestLogin.getToken()));
+			break;
+		case "LINE":
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "",
+					lineProvider.loginLineByToken(requestLogin.getToken()));
+			break;
+		case "YAHOOJP":
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "",
+					yahooJapanProvider.getyObject(requestLogin.getToken()));
+			break;
+
+		// TrinhNX : 08/2018 - Add phone login, required phoneNumber
+		case "PHONE":
+			final String phoneNumber = requestLogin.getPhoneNumber();
+			if (phoneNumber == null) {
+				responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
+			} else {
+				UserBean user = phoneProvider.populateUserDetailsFromFAK(phoneNumber, requestLogin.getToken());
+				if(user == null) {
+					responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
+				} else {
+					responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", user);
+				}
+			}
+			break;
+		default:
+			responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
+			break;
+		}
+		return new ResponseEntity<>(responseEntityBase, HttpStatus.OK);
+	}
 }

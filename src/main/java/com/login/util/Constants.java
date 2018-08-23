@@ -43,4 +43,9 @@ public class Constants {
         public static final String clientId = "client_id";
         public static final String paramAuthorize = "response_type=code";
     }
+    
+    public static final class FacebookAccountKitConst {
+    	public static final String ACCOUNT_KIT_LINK = "https://graph.accountkit.com/v1.3/me/?access_token=";
+    }
+    
 }

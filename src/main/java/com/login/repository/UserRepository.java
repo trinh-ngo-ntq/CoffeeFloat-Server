@@ -9,5 +9,14 @@ public interface UserRepository extends JpaRepository<UserBean, String> {
 
     UserBean findByUserId(String userId);
 
+    // TODO: Phone number is an ambiguous term (include region code?)
+    /**
+     * Expected one {@code UserBean} returned based on {@code phoneNumber} and {@code provider}
+     * @param phoneNumber
+     * @param provider
+     * @return null if none match, exception thrown when more than 2 matched
+     */
+    UserBean findByPhoneNumberAndProvider(String phoneNumber, String provider);
+    
 }
 
