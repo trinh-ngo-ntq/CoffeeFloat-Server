@@ -1,7 +1,6 @@
 package com.login.social.providers;
 
 import java.io.IOException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
-
+import com.login.exception.InvalidAccessToken;
 import com.login.model.UserBean;
 import com.login.repository.UserRepository;
 import com.login.util.Constants;
@@ -36,7 +35,10 @@ public class PhoneProvider {
 	 * @param accessToken
 	 * @return null if no information found with that token
 	 */
-	public UserBean populateUserDetailsFromFAK(String phoneNumber, String accessToken) {
+	public UserBean populateUserDetailsFromFAK(String phoneNumber, String accessToken) throws InvalidAccessToken {
+	    if(phoneNumber == null || accessToken == null) {
+	        throw new InvalidAccessToken("Not accept null value");
+	    }
 		// Step 1 : Make an request to link
 		// Step 2 : Parse the response
 		String encodedURL = Constants.FacebookAccountKitConst.ACCOUNT_KIT_LINK + accessToken;
@@ -53,7 +55,8 @@ public class PhoneProvider {
 		try {
 			final JSONObject resultJson = new JSONObject(resultStr);
 			if (resultJson.has("error")) {
-				return null;
+			    // whatever error occurs -> Throw an invalid token
+				throw new InvalidAccessToken("Invalid access token");
 			}
 			final String fakUserId = resultJson.getString("id");
 			JSONObject phoneJSON = resultJson.getJSONObject("phone");
@@ -96,9 +99,7 @@ public class PhoneProvider {
 			// Else other case, fall down to null
 			return null;
 		} catch (JSONException e) {
-			e.printStackTrace();
-			// Something wrong, return null;
-			return null;
+		    throw new InvalidAccessToken(e);		    
 		}
 	}
 }

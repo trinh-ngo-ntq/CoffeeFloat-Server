@@ -111,15 +111,11 @@ public class LoginController {
 		// TrinhNX : 08/2018 - Add phone login, required phoneNumber
 		case "PHONE":
 			final String phoneNumber = requestLogin.getPhoneNumber();
-			if (phoneNumber == null) {
+			UserBean user = phoneProvider.populateUserDetailsFromFAK(phoneNumber, requestLogin.getToken());
+			if(user == null) {
 				responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
 			} else {
-				UserBean user = phoneProvider.populateUserDetailsFromFAK(phoneNumber, requestLogin.getToken());
-				if(user == null) {
-					responseEntityBase = new ResponseEntityBase<>(HttpStatus.BAD_REQUEST.value(), "", null);
-				} else {
-					responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", user);
-				}
+				responseEntityBase = new ResponseEntityBase<>(HttpStatus.OK.value(), "", user);
 			}
 			break;
 		default:
