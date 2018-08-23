@@ -50,9 +50,6 @@ public class PhoneProvider {
 		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.setErrorHandler(responseErrorHandler);
 		String resultStr = restTemplate.getForObject(encodedURL, String.class);
-		// Validate the input phone number
-		// Get the phone number
-		System.err.println(resultStr);
 		try {
 			final JSONObject resultJson = new JSONObject(resultStr);
 			if (resultJson.has("error")) {
