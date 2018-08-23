@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import com.login.util.Constants;
 
@@ -22,9 +21,9 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
      * @return
      */
 
-    @ExceptionHandler(value = {ResourceNotFoundException.class, InvalidAccessToken.class})
-    protected ResponseEntity<Object> handleNotFound(final RuntimeException ex,
-            final WebRequest request) {
+    @ExceptionHandler(value = {InvalidAccessToken.class})
+    protected ResponseEntity<Object> handleNotFound(final InvalidAccessToken ex) {
+        ex.printStackTrace();
         ResponseError responseError = new ResponseError(HttpStatus.NOT_FOUND.toString(), new Date(),
                 Constants.HTTP_STATUS_MSG.ERROR_NOT_FOUND, ex.getMessage());
         logger.error(ex.getMessage());
@@ -39,6 +38,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
      */
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<?> handleInvalidToken(InvalidAccessToken ex) {
+        ex.printStackTrace();
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }

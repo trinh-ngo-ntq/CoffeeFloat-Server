@@ -22,11 +22,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-    	// TODO: Should spefic the URL which need / needed not the CSRF protection
-    	// Currently, no need for all request, it is a bad idea
-        // Disable crsf cho đường dẫn /rest/**
-        http.csrf().ignoringAntMatchers("/**");
+        // Disable the crsf for api path only
+        http.csrf().ignoringAntMatchers("/api/**");
         http.authorizeRequests().antMatchers("/login**").permitAll();
+        
         http.antMatcher("/**").httpBasic().authenticationEntryPoint(restServicesEntryPoint()).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()

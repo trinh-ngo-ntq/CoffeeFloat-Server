@@ -1,16 +1,16 @@
 package com.login.social.providers;
 
-import com.login.config.InstagramConfig;
-import com.login.exception.ResourceNotFoundException;
-import com.login.model.UserBean;
-import com.login.repository.UserRepository;
-import com.login.security.JwtService;
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.model.Token;
 import org.jinstagram.entity.users.basicinfo.UserInfo;
 import org.jinstagram.exceptions.InstagramException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.login.config.InstagramConfig;
+import com.login.exception.InvalidAccessToken;
+import com.login.model.UserBean;
+import com.login.repository.UserRepository;
+import com.login.security.JwtService;
 
 @Service
 public class InstagramProvider {
@@ -25,14 +25,14 @@ public class InstagramProvider {
     @Autowired
     UserRepository userRepository;
 
-    public UserBean getInstagramUserData(String token) {
+    public UserBean getInstagramUserData(String token) throws InvalidAccessToken{
         Token token1 = new Token(token, instagramConfig.clientSecret);
         Instagram instagram = new Instagram(token1);//verify token.
         UserInfo userInfo = null;
         try {
             userInfo = instagram.getCurrentUserInfo();
         } catch (InstagramException e) {
-            throw new ResourceNotFoundException("Token is invalid");
+            throw new InvalidAccessToken("Token is invalid");
         }
 
         UserBean userBean = userRepository.findByUserId(userInfo.getData().getId());

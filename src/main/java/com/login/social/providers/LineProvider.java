@@ -1,18 +1,18 @@
 package com.login.social.providers;
 
-import com.login.config.LineConfig;
-import com.login.exception.ResourceNotFoundException;
-import com.login.model.LineEntityProfile;
-import com.login.model.UserBean;
-import com.login.repository.UserRepository;
-import com.login.security.JwtService;
-import com.login.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import com.login.config.LineConfig;
+import com.login.exception.InvalidAccessToken;
+import com.login.model.LineEntityProfile;
+import com.login.model.UserBean;
+import com.login.repository.UserRepository;
+import com.login.security.JwtService;
+import com.login.util.Constants;
 
 @Service
 public class LineProvider {
@@ -29,13 +29,14 @@ public class LineProvider {
     @Autowired
     JwtService jwtService;
 
-    public UserBean loginLineByToken(String token) {
+    public UserBean loginLineByToken(String token) throws InvalidAccessToken {
         HttpHeaders headers = new HttpHeaders();
         headers.set(Constants.LineConst.authorization, Constants.LineConst.bearer + token);
         HttpEntity<HttpHeaders> httpEntity = new HttpEntity<>(headers);
-        LineEntityProfile lineEntityProfile = restTemplate.exchange(Constants.LineConst.urlProfile, HttpMethod.GET, httpEntity, LineEntityProfile.class).getBody();
+        LineEntityProfile lineEntityProfile = restTemplate.exchange(Constants.LineConst.urlProfile,
+                HttpMethod.GET, httpEntity, LineEntityProfile.class).getBody();
         if (lineEntityProfile == null || lineEntityProfile.getUserId() == null) {
-            throw new ResourceNotFoundException("Token is invalid");
+            throw new InvalidAccessToken("Token is invalid");
         }
         UserBean userBean = userRepository.findByUserId(lineEntityProfile.getUserId());
         if (userBean == null) {

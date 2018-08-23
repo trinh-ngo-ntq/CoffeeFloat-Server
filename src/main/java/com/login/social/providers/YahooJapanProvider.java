@@ -1,12 +1,12 @@
 package com.login.social.providers;
 
-import com.login.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.login.exception.InvalidAccessToken;
 import com.login.model.UserBean;
 import com.login.repository.UserRepository;
 import jp.co.yahoo.yconnect.YConnectExplicit;
 import jp.co.yahoo.yconnect.core.oidc.UserInfoObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class YahooJapanProvider {
@@ -18,13 +18,13 @@ public class YahooJapanProvider {
     @Autowired
     BaseProvider baseProvider;
 
-    public UserBean getyObject(String token) {
+    public UserBean getyObject(String token) throws InvalidAccessToken {
         UserInfoObject yObject;
         try {
             yConnectExplicit.requestUserInfo(token);
             yObject = yConnectExplicit.getUserInfoObject();
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Token invalid");
+            throw new InvalidAccessToken("Token invalid");
         }
         UserBean userBean = userRepository.findByUserId(yObject.getUserId());
         if (userBean == null || userBean.getUserId() == null) {

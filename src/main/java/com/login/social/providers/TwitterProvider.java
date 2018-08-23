@@ -1,13 +1,13 @@
 package com.login.social.providers;
 
-import com.login.exception.ResourceNotFoundException;
-import com.login.model.UserBean;
-import com.login.repository.UserRepository;
-import com.login.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.twitter.api.TwitterProfile;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 import org.springframework.stereotype.Service;
+import com.login.exception.InvalidAccessToken;
+import com.login.model.UserBean;
+import com.login.repository.UserRepository;
+import com.login.security.JwtService;
 
 @Service
 public class TwitterProvider {
@@ -20,11 +20,11 @@ public class TwitterProvider {
     @Autowired
     JwtService jwtService;
 
-    public UserBean populateUserDetailsFromTwitter(String token) {
+    public UserBean populateUserDetailsFromTwitter(String token) throws InvalidAccessToken {
         org.springframework.social.twitter.api.Twitter twitter = new TwitterTemplate(token);
         TwitterProfile twitterProfile = twitter.userOperations().getUserProfile();
         if (twitterProfile == null || Long.toString(twitterProfile.getId()) == null) {
-            throw new ResourceNotFoundException("Token is invalid");
+            throw new InvalidAccessToken("Token is invalid");
         }
         UserBean userBean = userRepository.findByUserId(Long.toString(twitterProfile.getId()));
         if (userBean == null) {

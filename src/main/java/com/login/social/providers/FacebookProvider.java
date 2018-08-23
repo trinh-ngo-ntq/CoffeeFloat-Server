@@ -1,13 +1,13 @@
 package com.login.social.providers;
 
-import com.login.exception.ResourceNotFoundException;
-import com.login.model.UserBean;
-import com.login.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.api.User;
 import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.stereotype.Service;
+import com.login.exception.InvalidAccessToken;
+import com.login.model.UserBean;
+import com.login.repository.UserRepository;
 
 
 @Service
@@ -20,12 +20,12 @@ public class FacebookProvider {
     UserRepository userRepository;
 
 
-    public UserBean populateUserDetailsFromFacebook(String token) {
+    public UserBean populateUserDetailsFromFacebook(String token) throws InvalidAccessToken {
         Facebook facebook = new FacebookTemplate(token);
         String[] fields = {"id", "cover", "birthday", "email", "gender", "name"};
         User user = facebook.fetchObject("me", User.class, fields);
         if (user == null || user.getId() == null) {
-            throw new ResourceNotFoundException("Token is invalid");
+            throw new InvalidAccessToken("Token is invalid");
         }
         UserBean userBean = userRepository.findByUserId(user.getId());
         if (userBean == null) {

@@ -22,15 +22,23 @@ public class UserBean implements Serializable {
     private String passwordConfirm;
     private String provider;
     private String avatar;
-    private String gender;
+    // TrinhNX: Change gender from String to int as Dung-san requested (08/23)
+    // O: other (default), 1: female, 2 : male
+    private int gender;
     private String favorits;
 
-    public String getGender() {
+    public int getGender() {
         return gender;
     }
 
     public void setGender(String gender) {
-        this.gender = gender;
+        if("male".equalsIgnoreCase(gender)) {
+            this.gender = 2;
+        } else if("female".equalsIgnoreCase(gender)) {
+            this.gender = 1;
+        } else {
+            this.gender = 0;    
+        }
     }
 
     public String getFavorits() {
