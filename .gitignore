@@ -8,3 +8,7 @@ target/
 *.ipr
 target
 .mvn
+.settings
+.apt_generated
+.apt_generated_tests
+/build/

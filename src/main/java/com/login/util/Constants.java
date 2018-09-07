@@ -34,7 +34,6 @@ public class Constants {
         public static final String bearer = "Bearer ";
         public static final String urlAuthorize = "https://access.line.me/oauth2/v2.1/authorize";
         public static final String responseType = "response_type";
-        public static final String paramAuthorize = "state=12345abcde&scope=openid%20profile&nonce=09876xyz";
     }
 
     public class InstagramConst {
